@@ -8,6 +8,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class IndexControllerTest {
@@ -33,7 +35,7 @@ public class IndexControllerTest {
         String indexPage = indexController.getIndexPage(model);
 
         verify(recipeSrv).getRecipes();
-        verify(model).addAttribute("recipes", recipeSrv.getRecipes());
+        verify(model).addAttribute(eq("recipes"), anySet());
 
         assertEquals(aString,indexPage);
     }
