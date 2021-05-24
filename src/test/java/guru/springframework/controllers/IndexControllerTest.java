@@ -1,42 +1,57 @@
 package guru.springframework.controllers;
 
+import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.ui.Model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-/**
- * Created by jt on 6/17/17.
- */
+
 public class IndexControllerTest {
 
     @Mock
-    RecipeService recipeService;
+    RecipeService recipeSrvMock;
 
     @Mock
-    Model model;
+    Model modelMock;
 
-    IndexController controller;
+    IndexController indexController;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        controller = new IndexController(recipeService);
+        indexController = new IndexController(recipeSrvMock);
     }
 
     @Test
-    public void getIndexPage() throws Exception {
+    public void getIndexPage() {
 
-        String viewName = controller.getIndexPage(model);
+        //Given
+        String expectIndexPage = "index";
+        Set<Recipe> recipeSetMock = new HashSet<>();
+        when(recipeSrvMock.getRecipes()).thenReturn(recipeSetMock);
 
-        assertEquals("index", viewName);
-        verify(recipeService, times(1)).getRecipes();
-        verify(model, times(1)).addAttribute(eq("recipes"), anySet());
+        //When
+        String indexPage = indexController.getIndexPage(modelMock);
+
+        //then
+        Class<Set<Recipe>> clazz = (Class<Set<Recipe>>) recipeSetMock.getClass();
+        ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(clazz);
+
+        verify(recipeSrvMock, times(1)).getRecipes();
+        verify(modelMock).addAttribute(eq("recipes"), argumentCaptor.capture());
+        assertEquals(expectIndexPage,indexPage);
+
+        Set<Recipe> passedRecipeSetToController = argumentCaptor.getValue();
+        assertEquals(recipeSetMock.size(),passedRecipeSetToController.size());
     }
-
 }
