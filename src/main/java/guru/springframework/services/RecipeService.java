@@ -16,5 +16,4 @@ public interface RecipeService {
 
     RecipeCommand saveRecipeCommand(RecipeCommand command);
 
-    Recipe saveRecipe(Recipe recipe);
 }

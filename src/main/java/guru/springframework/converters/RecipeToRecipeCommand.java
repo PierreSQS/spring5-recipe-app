@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class RecipeToRecipeCommand implements Converter<Recipe, RecipeCommand>{
 
-    private final CategoryToCategoryCommand categoryConveter;
+    private final CategoryToCategoryCommand categoryConverter;
     private final IngredientToIngredientCommand ingredientConverter;
     private final NotesToNotesCommand notesConverter;
 
-    public RecipeToRecipeCommand(CategoryToCategoryCommand categoryConveter, IngredientToIngredientCommand ingredientConverter,
+    public RecipeToRecipeCommand(CategoryToCategoryCommand categoryConverter, IngredientToIngredientCommand ingredientConverter,
                                  NotesToNotesCommand notesConverter) {
-        this.categoryConveter = categoryConveter;
+        this.categoryConverter = categoryConverter;
         this.ingredientConverter = ingredientConverter;
         this.notesConverter = notesConverter;
     }
@@ -45,12 +45,12 @@ public class RecipeToRecipeCommand implements Converter<Recipe, RecipeCommand>{
         command.setUrl(source.getUrl());
         command.setNotes(notesConverter.convert(source.getNotes()));
 
-        if (source.getCategories() != null && source.getCategories().size() > 0){
+        if (source.getCategories() != null && !source.getCategories().isEmpty()){
             source.getCategories()
-                    .forEach((Category category) -> command.getCategories().add(categoryConveter.convert(category)));
+                    .forEach((Category category) -> command.getCategories().add(categoryConverter.convert(category)));
         }
 
-        if (source.getIngredients() != null && source.getIngredients().size() > 0){
+        if (source.getIngredients() != null && !source.getIngredients().isEmpty()){
             source.getIngredients()
                     .forEach(ingredient -> command.getIngredients().add(ingredientConverter.convert(ingredient)));
         }

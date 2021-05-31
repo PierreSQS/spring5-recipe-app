@@ -2,14 +2,16 @@ package guru.springframework.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Created by jt on 6/13/17.
  */
 @Data
-@EqualsAndHashCode(exclude = {"recipe"})
+@ToString(exclude = "recipe")
 @Entity
 public class Notes {
 
@@ -23,4 +25,16 @@ public class Notes {
     @Lob
     private String recipeNotes;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notes notes = (Notes) o;
+        return Objects.equals(id, notes.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
