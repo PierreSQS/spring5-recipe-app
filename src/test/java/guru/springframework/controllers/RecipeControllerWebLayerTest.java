@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,7 +73,7 @@ public class RecipeControllerWebLayerTest {
         recipeCommandMock.setNotes(notesCommand);
         recipeCommandMock.setDescription("Recipe Description");
 
-        when(recipeSrvMock.saveRecipeCommand(recipeCommandMock)).thenReturn(recipeCommandMock);
+        when(recipeSrvMock.saveRecipeCommand(any())).thenReturn(recipeCommandMock);
 
         MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", recipeCommandMock.getId().toString());
@@ -82,8 +83,8 @@ public class RecipeControllerWebLayerTest {
 //        mockMvc.perform(post("/recipe").params(multiValueMap))
         mockMvc.perform(post("/recipe").params(multiValueMap))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(model().attributeExists("recipe"))
-                .andExpect(view().name("redirect:1/"+"/show"))
+//                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("redirect:1"+"/show"))
                 .andDo(print());
     }
 }

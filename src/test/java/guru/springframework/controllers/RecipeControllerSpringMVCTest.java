@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,7 +31,7 @@ public class RecipeControllerSpringMVCTest {
     private MockMvc mockMvc;
 
     @MockBean
-    RecipeService recipeService;
+    RecipeService recipeSrvMock;
 
 
     @Before
@@ -46,7 +47,7 @@ public class RecipeControllerSpringMVCTest {
         recipe.setId(1L);
         recipe.setNotes(notes);
 
-        when(recipeService.findById(anyLong())).thenReturn(recipe);
+        when(recipeSrvMock.findById(anyLong())).thenReturn(recipe);
 
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isOk())
@@ -63,10 +64,16 @@ public class RecipeControllerSpringMVCTest {
     }
 
     @Test
-    public void testSaveOrUpdate() throws Exception {
+    public void testSaveOrUpdateWithParams() throws Exception {
+        // given
         RecipeCommand recipeCmdMock = new RecipeCommand();
-        recipeCmdMock.setId(1L);
+        recipeCmdMock.setId(2L);
         recipeCmdMock.setDescription("Recipe Mock");
+
+        // when
+        when(recipeSrvMock.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
+        // then
         mockMvc.perform(post("/recipe")
                 .param("id",recipeCmdMock.getId().toString())
                 .param("description",recipeCmdMock.getDescription()))
@@ -74,15 +81,42 @@ public class RecipeControllerSpringMVCTest {
                 // Model-Attribute not present in this case.Why???
 //                .andExpect(model().attributeExists("recipe"))
 //                .andExpect(model().attribute("recipe",recipeMock))
+                .andExpect(view().name("redirect:2/show"))
+                .andDo(print());
+    }
+
+    @Test
+    public void testSaveOrUpdateWithoutParams() throws Exception {
+        // given
+        RecipeCommand recipeCmdMock = new RecipeCommand();
+        recipeCmdMock.setId(1L);
+        recipeCmdMock.setDescription("Recipe Mock");
+
+        // when
+        when(recipeSrvMock.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
+        // then
+        mockMvc.perform(post("/recipe"))
+                .andExpect(status().is3xxRedirection())
+                // Model-Attribute not present in this case.Why???
+//                .andExpect(model().attributeExists("recipe"))
+//                .andExpect(model().attribute("recipe",recipeMock))
+                .andExpect(view().name("redirect:1/show"))
                 .andDo(print());
     }
 
     @Test
     public void testSaveOrUpdateWithMultiMap() throws Exception {
+        // Given
         RecipeCommand recipeCmdMock = new RecipeCommand();
         recipeCmdMock.setId(1L);
         recipeCmdMock.setDescription("Recipe Mock");
 
+
+        // When
+        when(recipeSrvMock.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
+        // Then
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.add("id",recipeCmdMock.getId().toString());
         paramMap.add("description", recipeCmdMock.getDescription());

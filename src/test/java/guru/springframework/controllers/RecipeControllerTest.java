@@ -1,5 +1,6 @@
 package guru.springframework.controllers;
 
+import guru.springframework.commands.RecipeCommand;
 import guru.springframework.domain.Recipe;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
@@ -9,9 +10,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,6 +59,22 @@ public class RecipeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("recipe"))
                 .andExpect(view().name("recipe/recipeform"))
+                .andDo(print());
+    }
+
+    @Test
+    public void testSaveOrUpdate() throws Exception {
+
+        RecipeCommand recipeCmdMock = new RecipeCommand();
+        recipeCmdMock.setId(3L);
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
+        mockMvc.perform(post("/recipe"))
+                .andExpect(status().is3xxRedirection())
+                // In this case Model-Attribute generated
+                // but not in the test with @WebMvcTest?!?
+                .andExpect(model().attributeExists("recipeCommand"))
                 .andDo(print());
     }
 }
