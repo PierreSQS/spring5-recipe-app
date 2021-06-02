@@ -1,6 +1,7 @@
 package guru.springframework.domain;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Set;
  */
 @Data
 @Entity
+@ToString(exclude = {"notes"})
 public class Recipe {
 
     @Id
