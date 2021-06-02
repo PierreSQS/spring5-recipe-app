@@ -18,8 +18,7 @@ import org.springframework.util.MultiValueMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -126,6 +125,21 @@ public class RecipeControllerSpringMVCTest {
                 // Model-Attribute not present in this case.Why???
 //                .andExpect(model().attributeExists("recipe"))
 //                .andExpect(model().attribute("recipe",recipeMock))
+                .andDo(print());
+    }
+
+    @Test
+    public void testUpdateRecipe() throws Exception {
+
+        RecipeCommand recipeCmdMock = new RecipeCommand();
+        recipeCmdMock.setId(3L);
+        recipeCmdMock.setDescription("Recipe Mock 3");
+
+        when(recipeSrvMock.findCommandById(anyLong())).thenReturn(recipeCmdMock);
+
+        mockMvc.perform(get("/recipe/3/update"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
                 .andDo(print());
     }
 }

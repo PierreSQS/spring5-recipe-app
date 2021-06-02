@@ -75,6 +75,7 @@ public class RecipeControllerTest {
                 // In this case Model-Attribute generated
                 // but not in the test with @WebMvcTest?!?
                 .andExpect(model().attributeExists("recipeCommand"))
+                .andExpect(view().name("redirect:3/show"))
                 .andDo(print());
     }
 }
