@@ -16,9 +16,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -58,7 +60,6 @@ public class RecipeControllerWebLayerTest {
 
     @Test
     public void testGetNewRecipeForm() throws Exception {
-        RecipeCommand command = new RecipeCommand();
 
         mockMvc.perform(get("/recipe/new"))
                 .andExpect(status().isOk())
@@ -95,4 +96,18 @@ public class RecipeControllerWebLayerTest {
                 .andExpect(model().attributeExists("recipe"));
     }
 
+    @Test
+    public void testDeleteRecipe() throws Exception {
+        Long idTodelete = 1L;
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(idTodelete);
+
+        mockMvc.perform(get("/recipe/1/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/"))
+                .andDo(print());
+
+        verify(recipeService).deleteById(anyLong());
+
+    }
 }
