@@ -52,8 +52,8 @@ public class RecipeControllerWebLayerTest {
 
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("recipe/show"))
-                .andExpect(model().attributeExists("recipe"));
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("recipe/showrecipe_by_id"));
     }
 
     @Test
@@ -126,7 +126,9 @@ public class RecipeControllerWebLayerTest {
                 .andExpect(status().is3xxRedirection())
                 // Model-Attribute not present in this case.Why???
 //                .andExpect(model().attributeExists("recipe"))
-//                .andExpect(model().attribute("recipe",recipeMock))                .andExpect(view().name("redirect:1"+"/show"))
+//                .andExpect(model().attribute("recipe",recipeMock))
+//
+                .andExpect(view().name("redirect:1"+"/show"))
                 .andDo(print());
     }
 
