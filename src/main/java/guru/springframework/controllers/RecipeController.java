@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("recipe")
 public class RecipeController {
 
+    private static final String RECIPE_ATTR ="recipe";
     private final RecipeService recipeService;
 
     public RecipeController(RecipeService recipeService) {
@@ -22,13 +23,13 @@ public class RecipeController {
     @GetMapping("{id}/show")
     public String showById(@PathVariable String id, Model model){
 
-        model.addAttribute("recipe", recipeService.findById(Long.valueOf(id)));
+        model.addAttribute(RECIPE_ATTR, recipeService.findById(Long.valueOf(id)));
         return "recipe/show";
     }
 
     @GetMapping("new")
     public String showRecipeForm(RecipeCommand recipeCommand, Model model){
-        model.addAttribute("recipe", new RecipeCommand());
+        model.addAttribute(RECIPE_ATTR, new RecipeCommand());
         return "recipe/recipeform";
     }
 
@@ -40,8 +41,14 @@ public class RecipeController {
 
     @GetMapping("{id}/update")
     public String updateRecipe(@PathVariable Long id, Model model) {
-        model.addAttribute("recipe", recipeService.findCommandById(id));
+        model.addAttribute(RECIPE_ATTR, recipeService.findCommandById(id));
         return "recipe/recipeform";
+    }
+
+    @GetMapping("{id}/delete")
+    public String deleteRecipe(@PathVariable Long id, Model model) {
+        recipeService.deleteById(id);
+        return "redirect:/";
     }
 
 }

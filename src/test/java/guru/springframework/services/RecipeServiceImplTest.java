@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -42,7 +42,7 @@ public class RecipeServiceImplTest {
     }
 
     @Test
-    public void getRecipeByIdTest() throws Exception {
+    public void getRecipeByIdTest() {
         Recipe recipe = new Recipe();
         recipe.setId(1L);
         Optional<Recipe> recipeOptional = Optional.of(recipe);
@@ -57,7 +57,7 @@ public class RecipeServiceImplTest {
     }
 
     @Test
-    public void getRecipesTest() throws Exception {
+    public void getRecipesTest() {
 
         Recipe recipe = new Recipe();
         HashSet<Recipe> receipesData = new HashSet<>();
@@ -70,6 +70,20 @@ public class RecipeServiceImplTest {
         assertEquals(1, recipes.size());
         verify(recipeRepository, times(1)).findAll();
         verify(recipeRepository, never()).findById(anyLong());
+    }
+
+    @Test
+    public void deleteByIdTest() {
+
+        // Given
+        Long idToDelete = 1L;
+
+        // when
+        recipeService.deleteById(idToDelete);
+
+        //then
+        verify(recipeRepository).deleteById(idToDelete);
+
     }
 
 }
