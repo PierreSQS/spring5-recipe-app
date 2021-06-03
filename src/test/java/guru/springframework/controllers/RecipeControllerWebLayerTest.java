@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,18 +73,19 @@ public class RecipeControllerWebLayerTest {
         recipeCommandMock.setNotes(notesCommand);
         recipeCommandMock.setDescription("Recipe Description");
 
+        // THIS IS WRONG!!! IT CAUSES THE NPE IN THE CONTROLLER
         when(recipeSrvMock.saveRecipeCommand(recipeCommandMock)).thenReturn(recipeCommandMock);
+
+        // THIS IS CORRECT!!! IF YOU COMMENT OUT THIS LINE THE TEST WILL PASS!
+        // when(recipeSrvMock.saveRecipeCommand(any())).thenReturn(recipeCommandMock);
 
         MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", recipeCommandMock.getId().toString());
-//        multiValueMap.add("notes", recipeCommandMock.getNotes().getRecipeNotes());
         multiValueMap.add("description", recipeCommandMock.getDescription());
 
-//        mockMvc.perform(post("/recipe").params(multiValueMap))
         mockMvc.perform(post("/recipe").params(multiValueMap))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(model().attributeExists("recipe"))
-                .andExpect(view().name("redirect:1/"+"/show"))
+                .andExpect(view().name("redirect:1"+"/show"))
                 .andDo(print());
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -67,13 +68,18 @@ public class RecipeControllerSpringMVCTest {
         RecipeCommand recipeCmdMock = new RecipeCommand();
         recipeCmdMock.setId(1L);
         recipeCmdMock.setDescription("Recipe Mock");
+
+        // THIS CORRECT!!!
+        // IF YOU COMMENT OUT THIS LINE THE TEST WILL PASS!
+        // when(recipeService.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
+        // THIS IS WRONG!!! IT CAUSES THE NPE IN THE CONTROLLER
+        when(recipeService.saveRecipeCommand(recipeCmdMock)).thenReturn(recipeCmdMock);
+
         mockMvc.perform(post("/recipe")
                 .param("id",recipeCmdMock.getId().toString())
                 .param("description",recipeCmdMock.getDescription()))
                 .andExpect(status().is3xxRedirection())
-                // Model-Attribute not present in this case.Why???
-//                .andExpect(model().attributeExists("recipe"))
-//                .andExpect(model().attribute("recipe",recipeMock))
                 .andDo(print());
     }
 
@@ -83,15 +89,16 @@ public class RecipeControllerSpringMVCTest {
         recipeCmdMock.setId(1L);
         recipeCmdMock.setDescription("Recipe Mock");
 
+        // THE NPE IS DUE TO THE FACT THAT THE MOCKING IS MISSING
+        // IF YOU COMMENT OUT THIS LINE THE TEST WILL PASS!
+        //when(recipeService.saveRecipeCommand(any())).thenReturn(recipeCmdMock);
+
         MultiValueMap<String, String> paramMap = new LinkedMultiValueMap<>();
         paramMap.add("id",recipeCmdMock.getId().toString());
         paramMap.add("description", recipeCmdMock.getDescription());
         mockMvc.perform(post("/recipe")
                 .params(paramMap))
                 .andExpect(status().is3xxRedirection())
-                // Model-Attribute not present in this case.Why???
-//                .andExpect(model().attributeExists("recipe"))
-//                .andExpect(model().attribute("recipe",recipeMock))
                 .andDo(print());
     }
 }

@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by jt on 6/19/17.
+ * Created by Pierrot on 6/3/21.
  */
 @Controller
 @RequestMapping("recipe")
@@ -35,7 +35,7 @@ public class RecipeController {
     @PostMapping
     public String saveOrUpdate(@ModelAttribute RecipeCommand recipeCommand) {
         RecipeCommand savedRecipeCmd = recipeService.saveRecipeCommand(recipeCommand);
-        return "redirect:"+savedRecipeCmd.getId()+"/show/";
+        return "redirect:"+savedRecipeCmd.getId()+"/show";
     }
 
 }
