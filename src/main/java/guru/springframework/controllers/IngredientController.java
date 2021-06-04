@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Slf4j
 @Controller
+@RequestMapping("recipe")
 public class IngredientController {
 
     private final RecipeService recipeService;
@@ -21,8 +22,7 @@ public class IngredientController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping
-    @RequestMapping("/recipe/{recipeId}/ingredients")
+    @GetMapping("{recipeId}/ingredients")
     public String listIngredients(@PathVariable String recipeId, Model model){
         log.debug("Getting ingredient list for recipe id: " + recipeId);
 

@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @Controller
+@RequestMapping("recipe")
 public class RecipeController {
+
+    private static final String RECIPE_ATTR = "recipe";
 
     private final RecipeService recipeService;
 
@@ -20,38 +23,34 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping
-    @RequestMapping("/recipe/{id}/show")
+    @GetMapping("{id}/show")
     public String showById(@PathVariable String id, Model model){
 
-        model.addAttribute("recipe", recipeService.findById(Long.valueOf(id)));
+        model.addAttribute(RECIPE_ATTR, recipeService.findById(Long.valueOf(id)));
         return "recipe/show";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/new")
+    @GetMapping("new")
     public String newRecipe(Model model){
-        model.addAttribute("recipe", new RecipeCommand());
+        model.addAttribute(RECIPE_ATTR, new RecipeCommand());
 
         return "recipe/recipeform";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{id}/update")
+    @GetMapping("{id}/update")
     public String updateRecipe(@PathVariable String id, Model model){
-        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+        model.addAttribute(RECIPE_ATTR, recipeService.findCommandById(Long.valueOf(id)));
         return  "recipe/recipeform";
     }
 
-    @PostMapping("recipe")
+    @PostMapping("")
     public String saveOrUpdate(@ModelAttribute RecipeCommand command){
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
     }
 
-    @GetMapping
-    @RequestMapping("recipe/{id}/delete")
+    @GetMapping("{id}/delete")
     public String deleteById(@PathVariable String id){
 
         log.debug("Deleting id: " + id);
