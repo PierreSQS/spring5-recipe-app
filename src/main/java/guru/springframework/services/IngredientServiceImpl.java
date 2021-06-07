@@ -2,6 +2,7 @@ package guru.springframework.services;
 
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.converters.IngredientToIngredientCommand;
+import guru.springframework.domain.Ingredient;
 import guru.springframework.domain.Recipe;
 import guru.springframework.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,24 +28,30 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
 
-        Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+        IngredientCommand ingredientCommand = null;
 
-        if (!recipeOptional.isPresent()){
+        Optional<Recipe> foundRecipeDBOpt = recipeRepository.findById(recipeId);
+
+        if (foundRecipeDBOpt.isPresent()) {
+            Recipe recipe = foundRecipeDBOpt.get();
+
+            Optional<Ingredient> foundIngredientFromRecipeOpt = recipe.getIngredients().stream()
+                    .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                    .findFirst();
+
+            if(foundIngredientFromRecipeOpt.isPresent()){
+                ingredientCommand = ingredientToIngredientCommand.convert(foundIngredientFromRecipeOpt.get());
+            } else {
+                //todo impl error handling
+                log.error("Ingredient id not found: " + ingredientId);
+            }
+
+        } else  {
             //todo impl error handling
             log.error("recipe id not found. Id: " + recipeId);
         }
 
-        Recipe recipe = recipeOptional.get();
 
-        Optional<IngredientCommand> ingredientCommandOptional = recipe.getIngredients().stream()
-                .filter(ingredient -> ingredient.getId().equals(ingredientId))
-                .map( ingredient -> ingredientToIngredientCommand.convert(ingredient)).findFirst();
-
-        if(!ingredientCommandOptional.isPresent()){
-            //todo impl error handling
-            log.error("Ingredient id not found: " + ingredientId);
-        }
-
-        return ingredientCommandOptional.get();
+        return ingredientCommand;
     }
 }
