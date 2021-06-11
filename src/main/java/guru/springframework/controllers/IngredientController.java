@@ -54,7 +54,6 @@ public class IngredientController {
     @PostMapping("{recipeId}/ingredient")
     public String submitIngredient(@PathVariable Long recipeId, Model model, @ModelAttribute IngredientCommand ingrCmd) {
         IngredientCommand saveIngrCmd = ingredientService.saveIngredientCommand(ingrCmd);
-        model.addAttribute("recipe", saveIngrCmd);
         log.debug("#### updated ingredient: {}",saveIngrCmd);
         return "redirect:/recipe/"+ recipeId +"/ingredient/"+saveIngrCmd.getId()+"/show";
     }

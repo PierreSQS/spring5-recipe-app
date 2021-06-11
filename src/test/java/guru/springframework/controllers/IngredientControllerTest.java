@@ -128,7 +128,7 @@ public class IngredientControllerTest {
         when(ingredientSrvMock.saveIngredientCommand(any())).thenReturn(ingrCmdMock);
         mockMvc.perform(post("/recipe/2/ingredient"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(model().attributeExists("recipe"))
+                .andExpect(model().attributeExists("ingredientCommand"))
                 .andExpect(view().name("redirect:/recipe/2/ingredient/1/show"))
                 .andDo(print());
     }
