@@ -1,6 +1,7 @@
 package guru.springframework.services;
 
 import guru.springframework.commands.IngredientCommand;
+import guru.springframework.converters.IngredientCommandToIngredient;
 import guru.springframework.converters.IngredientToIngredientCommand;
 import guru.springframework.converters.UnitOfMeasureToUnitOfMeasureCommand;
 import guru.springframework.domain.Ingredient;
@@ -21,6 +22,8 @@ public class IngredientServiceImplTest {
 
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
 
+    private IngredientCommandToIngredient ingrCmdToIngr;
+
     @Mock
     RecipeRepository recipeRepository;
 
@@ -35,15 +38,11 @@ public class IngredientServiceImplTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, recipeRepository);
+        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, ingrCmdToIngr, recipeRepository);
     }
 
     @Test
-    public void findByRecipeIdAndId() throws Exception {
-    }
-
-    @Test
-    public void findByRecipeIdAndReceipeIdHappyPath() throws Exception {
+    public void findByRecipeIdAndReceipeIdHappyPath() {
         //given
         Recipe recipe = new Recipe();
         recipe.setId(1L);

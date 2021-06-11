@@ -3,7 +3,6 @@ package guru.springframework.controllers;
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.commands.UnitOfMeasureCommand;
-import guru.springframework.domain.UnitOfMeasure;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
@@ -24,6 +23,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -116,6 +116,21 @@ public class IngredientControllerTest {
         verify(ingredientSrvMock).findByRecipeIdAndIngredientId(anyLong(),anyLong());
         verify(unitOfMeasureCmdSrvMock).findAllUomCommands();
 
+    }
+
+    @Test
+    public void testSubmitIngredient() throws Exception {
+        IngredientCommand ingrCmdMock = new IngredientCommand();
+        ingrCmdMock.setId(1L);
+        ingrCmdMock.setRecipeId(2L);
+
+        ingrCmdMock.setDescription("Ingredient Mock");
+        when(ingredientSrvMock.saveIngredientCommand(any())).thenReturn(ingrCmdMock);
+        mockMvc.perform(post("/recipe/2/ingredient"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("redirect:/recipe/2/ingredient/1/show"))
+                .andDo(print());
     }
 
 }

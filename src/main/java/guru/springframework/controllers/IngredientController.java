@@ -1,14 +1,13 @@
 package guru.springframework.controllers;
 
+import guru.springframework.commands.IngredientCommand;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by jt on 6/28/17.
@@ -50,5 +49,13 @@ public class IngredientController {
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId,ingredientId));
         model.addAttribute("uomList", unitOfMeasureService.findAllUomCommands());
         return "recipe/ingredient/ingredientform";
+    }
+
+    @PostMapping("{recipeId}/ingredient")
+    public String submitIngredient(@PathVariable Long recipeId, Model model, @ModelAttribute IngredientCommand ingrCmd) {
+        IngredientCommand saveIngrCmd = ingredientService.saveIngredientCommand(ingrCmd);
+        model.addAttribute("recipe", saveIngrCmd);
+        log.debug("#### updated ingredient: {}",saveIngrCmd);
+        return "redirect:/recipe/"+ recipeId +"/ingredient/"+saveIngrCmd.getId()+"/show";
     }
 }
