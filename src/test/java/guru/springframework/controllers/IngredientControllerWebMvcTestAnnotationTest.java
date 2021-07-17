@@ -2,6 +2,7 @@ package guru.springframework.controllers;
 
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.commands.RecipeCommand;
+import guru.springframework.commands.UnitOfMeasureCommand;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
@@ -64,7 +65,11 @@ public class IngredientControllerWebMvcTestAnnotationTest {
     @Test
     public void testShowIngredient() throws Exception {
         //given
+        UnitOfMeasureCommand uom = new UnitOfMeasureCommand();
+        uom.setDescription("Tea spoon");
         IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setUom(uom);
+        ingredientCommand.getUom().setDescription("Mock Description");
 
         //when
         when(ingredientService.findByRecipeIdAndIngredientId(anyLong(), anyLong())).thenReturn(ingredientCommand);
