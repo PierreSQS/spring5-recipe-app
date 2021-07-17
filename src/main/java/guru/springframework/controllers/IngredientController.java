@@ -10,7 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by jt on 6/28/17.
+ * Refactored by Pierrot on 7/17/21.
+ * Extended   by Pierrot on 7/18/21
  */
 @Slf4j
 @Controller
@@ -42,6 +43,17 @@ public class IngredientController {
                                        @PathVariable String id, Model model){
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(Long.valueOf(recipeId), Long.valueOf(id)));
         return "recipe/ingredient/show";
+    }
+
+    @GetMapping("{recipeId}/ingredient/new")
+    public String createRecipeIngredient(@PathVariable Long recipeId, Model model) {
+
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(recipeId);
+
+        model.addAttribute("ingredient", ingredientCommand);
+
+        return "recipe/ingredient/ingredientform";
     }
 
     @GetMapping("{recipeId}/ingredient/{id}/update")
