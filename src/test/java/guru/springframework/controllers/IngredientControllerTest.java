@@ -19,6 +19,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class IngredientControllerTest {
@@ -76,6 +77,17 @@ public class IngredientControllerTest {
     }
 
     @Test
+    public void testCreateIngredient() throws Exception {
+        //then
+        mockMvc.perform(get("/recipe/1/ingredient/new"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/ingredient/ingredientform"))
+                .andExpect(model().attributeExists("ingredient"))
+                .andExpect(model().attributeExists("uomList"))
+                .andDo(print());
+    }
+
+    @Test
     public void testUpdateIngredientForm() throws Exception {
         //given
         IngredientCommand ingredientCommand = new IngredientCommand();
@@ -109,7 +121,8 @@ public class IngredientControllerTest {
                 .param("description", "some string")
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/recipe/2/ingredient/3/show"));
+                .andExpect(view().name("redirect:/recipe/2/ingredient/3/show"))
+                .andDo(print());
 
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -84,14 +85,24 @@ public class IngredientControllerWebMvcTestAnnotationTest {
     @Test
     public void testCreateIngredient() throws Exception {
         //given
+        // Necessary to make the Test pass but not with
+        // Test without @WebMvcTest
+        UnitOfMeasureCommand uom1 = new UnitOfMeasureCommand();
+        uom1.setDescription("Tea Spoon");
+        uom1.setId(1L);
+
+        UnitOfMeasureCommand uom2 = new UnitOfMeasureCommand();
+        uom2.setDescription("Cup");
+        uom2.setId(1L);
 
         //when
+        when(unitOfMeasureService.listAllUoms()).thenReturn(new HashSet<>(Arrays.asList(uom1,uom2)));
 
         //then
         mockMvc.perform(get("/recipe/1/ingredient/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/ingredient/ingredientform"))
-//                .andExpect(model().attributeExists("ingredient"))
+                .andExpect(model().attributeExists("ingredient","uomList"))
                 .andDo(print());
     }
 
