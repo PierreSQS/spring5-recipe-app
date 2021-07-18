@@ -118,6 +118,8 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public void deleteIngredientByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+        log.debug("Deleting ingredient: recID={}, ingrID={} ",recipeId, ingredientId);
+
         // search for recipe by ID
         Optional<Recipe> optRecipeByID = recipeRepository.findById(recipeId);
 
