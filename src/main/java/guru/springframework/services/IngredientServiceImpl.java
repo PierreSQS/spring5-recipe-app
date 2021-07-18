@@ -38,17 +38,20 @@ public class IngredientServiceImpl implements IngredientService {
     public IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
 
         Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+        Recipe recipe = null;
+        Optional<IngredientCommand> ingredientCommandOptional;
 
-        if (!recipeOptional.isPresent()){
+        if (recipeOptional.isPresent()) {
+            recipe = recipeOptional.get();
+        } else {
             //todo impl error handling
             log.error("recipe id not found. Id: " + recipeId);
         }
 
-        Recipe recipe = recipeOptional.get();
 
-        Optional<IngredientCommand> ingredientCommandOptional = recipe.getIngredients().stream()
+        ingredientCommandOptional = recipe.getIngredients().stream()
                 .filter(ingredient -> ingredient.getId().equals(ingredientId))
-                .map( ingredient -> ingredientToIngredientCommand.convert(ingredient)).findFirst();
+                .map(ingredientToIngredientCommand::convert).findFirst();
 
         if(!ingredientCommandOptional.isPresent()){
             //todo impl error handling
@@ -112,4 +115,34 @@ public class IngredientServiceImpl implements IngredientService {
         }
 
     }
+
+    @Override
+    public void deleteIngredientByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+        // search for recipe by ID
+        Optional<Recipe> optRecipeByID = recipeRepository.findById(recipeId);
+
+        // if present search for ingredient
+        if (optRecipeByID.isPresent()){
+            Recipe foundRecipe = optRecipeByID.get();
+
+            Optional<Ingredient> optIngredient = foundRecipe.getIngredients().stream()
+                    .filter(ingredient -> ingredient.getId().equals(ingredientId))
+                    .findFirst();
+
+            // if ingredient present delete it
+            if (optIngredient.isPresent()){
+                Ingredient foundIngredient = optIngredient.get();
+                foundRecipe.getIngredients().remove(foundIngredient);
+                // then save recipe
+                recipeRepository.save(foundRecipe);
+            } else {
+                log.debug("####### Ingredient not found #######");
+            }
+
+        } else {
+            log.debug("####### Recipe not found #######");
+        }
+
+    }
+
 }

@@ -17,10 +17,13 @@ import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Extended   by Pierrot on 7/18/21
+ */
 public class IngredientControllerTest {
 
     @Mock
@@ -131,6 +134,25 @@ public class IngredientControllerTest {
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/2/ingredient/3/show"));
+
+    }
+
+    @Test
+    public void deleteIngredient() throws Exception {
+        //Given
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(2L);
+        ingredientCommand.setId(1L);
+
+        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(),anyLong())).thenReturn(ingredientCommand);
+
+        mockMvc.perform(get("/recipe/2/ingredient/1/delete"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("/recipe/ingredient/list"))
+                .andDo(print());
+
+        verify(ingredientService).deleteIngredientByRecipeIdAndIngredientId(anyLong(), anyLong());
 
     }
 }

@@ -47,12 +47,8 @@ public class IngredientServiceImplTest {
                 recipeRepository, unitOfMeasureRepository);
     }
 
-    @Test
-    public void findByRecipeIdAndId() throws Exception {
-    }
-
-    @Test
-    public void findByRecipeIdAndReceipeIdHappyPath() throws Exception {
+   @Test
+    public void findByRecipeIdAndReceipeIdHappyPath() {
         //given
         Recipe recipe = new Recipe();
         recipe.setId(1L);
@@ -84,7 +80,7 @@ public class IngredientServiceImplTest {
 
 
     @Test
-    public void testSaveRecipeCommand() throws Exception {
+    public void testSaveRecipeCommand() {
         //given
         IngredientCommand command = new IngredientCommand();
         command.setId(3L);
@@ -106,6 +102,14 @@ public class IngredientServiceImplTest {
         assertEquals(Long.valueOf(3L), savedCommand.getId());
         verify(recipeRepository, times(1)).findById(anyLong());
         verify(recipeRepository, times(1)).save(any(Recipe.class));
+
+    }
+
+    @Test
+    public void deleteIngredientByRecipeIdAndIngredientId() {
+
+        // When
+        ingredientService.deleteIngredientByRecipeIdAndIngredientId(1L,2L);
 
     }
 }
