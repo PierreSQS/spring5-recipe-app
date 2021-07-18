@@ -2,6 +2,7 @@ package guru.springframework.controllers;
 
 import guru.springframework.commands.IngredientCommand;
 import guru.springframework.commands.RecipeCommand;
+import guru.springframework.domain.Recipe;
 import guru.springframework.services.IngredientService;
 import guru.springframework.services.RecipeService;
 import guru.springframework.services.UnitOfMeasureService;
@@ -140,11 +141,8 @@ public class IngredientControllerTest {
     @Test
     public void deleteIngredient() throws Exception {
         //Given
-        IngredientCommand ingredientCommand = new IngredientCommand();
-        ingredientCommand.setRecipeId(2L);
-        ingredientCommand.setId(1L);
-
-        when(ingredientService.findByRecipeIdAndIngredientId(anyLong(),anyLong())).thenReturn(ingredientCommand);
+        Recipe recipe = new Recipe();
+        when(recipeService.findById(2L)).thenReturn(recipe);
 
         mockMvc.perform(get("/recipe/2/ingredient/1/delete"))
                 .andExpect(status().isOk())
