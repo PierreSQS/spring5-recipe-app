@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Created by jt on 6/13/17.
+ * Modified by Pierrot on 7/20/21.
  */
 @Slf4j
 @Service
@@ -35,7 +35,7 @@ public class RecipeServiceImpl implements RecipeService {
         log.debug("I'm in the service");
 
         Set<Recipe> recipeSet = new HashSet<>();
-        recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add);
+        recipeRepository.findAll().forEach(recipeSet::add);
         return recipeSet;
     }
 
