@@ -26,7 +26,11 @@ public class ImageController {
     }
 
     @GetMapping("{recipeId}/image")
-    public void showUploadForm(@PathVariable Long recipeId, Model model) {
-
+    public String showUploadForm(@PathVariable Long recipeId, Model model) {
+        model.addAttribute("recipe", recipeService.findById(recipeId));
+        return "/recipe/imageuploadform";
+    // Also Works!!!!
+    // return "recipe/imageuploadform";
     }
+
 }

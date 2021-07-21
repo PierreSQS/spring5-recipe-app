@@ -1,5 +1,6 @@
 package guru.springframework.controllers;
 
+import guru.springframework.domain.Recipe;
 import guru.springframework.services.ImageService;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
@@ -11,9 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(ImageController.class)
@@ -34,8 +37,17 @@ public class ImageControllerTest {
 
     @Test
     public void showUploadForm() throws Exception {
+        // Given
+        Recipe recipeMock = new Recipe();
+        recipeMock.setDescription("Recipe Mock");
+
+        when(recipeSrvMock.findById(2L)).thenReturn(recipeMock);
+
         mockMvc.perform(get("/recipe/2/image"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("/recipe/imageuploadform"))
+                .andExpect(content().string(containsString("<title>Image Upload Form</title>")))
                 .andDo(print());
     }
 
