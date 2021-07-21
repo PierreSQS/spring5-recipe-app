@@ -38,6 +38,7 @@ public class ImageController {
 
     @PostMapping("{recipeId}/image")
     public String handleImage(@PathVariable Long recipeId, @Param("lksfsl") MultipartFile multipartFile) {
+        imageService.saveImageFile(recipeId,multipartFile);
         return "redirect:/recipe/"+recipeId+"/show";
     }
 

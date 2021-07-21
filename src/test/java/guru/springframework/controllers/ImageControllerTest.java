@@ -15,6 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -56,14 +59,18 @@ public class ImageControllerTest {
 
     @Test
     public void handleImage() throws Exception {
+        Long recipeID = 3L;
+
         MockMultipartFile mockMultipartFile =
                 new MockMultipartFile("imagefile","testing.txt", "text/plain",
                         "Spring Guru".getBytes());
 
-        mockMvc.perform(multipart("/recipe/{recipeId}/image",3).file(mockMultipartFile))
+        mockMvc.perform(multipart("/recipe/{recipeId}/image",recipeID).file(mockMultipartFile))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/recipe/3/show"))
-                .andExpect(header().string("Location",equalTo("/recipe/3/show")))
+                .andExpect(view().name("redirect:/recipe/"+recipeID+"/show"))
+                .andExpect(header().string("Location",equalTo("/recipe/"+recipeID+"/show")))
                 .andDo(print());
+
+        verify(imageSrvMock).saveImageFile(anyLong(), any());
     }
 }
