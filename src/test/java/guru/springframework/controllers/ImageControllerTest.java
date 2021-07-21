@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,4 +52,11 @@ public class ImageControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    public void handleImage() throws Exception {
+        mockMvc.perform(multipart("/recipe/{recipeId}/image",3))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/3/show"))
+                .andDo(print());
+    }
 }
