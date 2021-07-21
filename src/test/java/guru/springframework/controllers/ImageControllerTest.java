@@ -9,10 +9,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -54,9 +56,14 @@ public class ImageControllerTest {
 
     @Test
     public void handleImage() throws Exception {
-        mockMvc.perform(multipart("/recipe/{recipeId}/image",3))
+        MockMultipartFile mockMultipartFile =
+                new MockMultipartFile("imagefile","testing.txt", "text/plain",
+                        "Spring Guru".getBytes());
+
+        mockMvc.perform(multipart("/recipe/{recipeId}/image",3).file(mockMultipartFile))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/3/show"))
+                .andExpect(header().string("Location",equalTo("/recipe/3/show")))
                 .andDo(print());
     }
 }
