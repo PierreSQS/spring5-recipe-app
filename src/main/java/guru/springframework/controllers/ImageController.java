@@ -4,16 +4,14 @@ import guru.springframework.services.ImageService;
 import guru.springframework.services.RecipeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Created by jt on 7/3/17.
+ * Modified by Pierrot on 7/24/21.
  */
 @Controller
+@RequestMapping("recipe")
 public class ImageController {
 
     private final ImageService imageService;
@@ -24,17 +22,17 @@ public class ImageController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("recipe/{id}/image")
-    public String showUploadForm(@PathVariable String id, Model model){
-        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+    @GetMapping("{id}/image")
+    public String showUploadForm(@PathVariable Long id, Model model){
+        model.addAttribute("recipe", recipeService.findCommandById(id));
 
         return "recipe/imageuploadform";
     }
 
-    @PostMapping("recipe/{id}/image")
-    public String handleImagePost(@PathVariable String id, @RequestParam("imagefile") MultipartFile file){
+    @PostMapping("{id}/image")
+    public String handleImagePost(@PathVariable Long id, @RequestParam("imagefile") MultipartFile file){
 
-        imageService.saveImageFile(Long.valueOf(id), file);
+        imageService.saveImageFile(id, file);
 
         return "redirect:/recipe/" + id + "/show";
     }

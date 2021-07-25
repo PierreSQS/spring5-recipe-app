@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 /**
  * Created by jt on 7/3/17.
  */
@@ -29,7 +27,8 @@ public class ImageServiceImpl implements ImageService {
     public void saveImageFile(Long recipeId, MultipartFile file) {
 
         try {
-            Recipe recipe = recipeRepository.findById(recipeId).get();
+            Recipe recipe = recipeRepository.findById(recipeId)
+                    .orElseThrow(() -> new Exception("Recipe not found in the DB!!"));
 
             Byte[] byteObjects = new Byte[file.getBytes().length];
 
@@ -42,7 +41,8 @@ public class ImageServiceImpl implements ImageService {
             recipe.setImage(byteObjects);
 
             recipeRepository.save(recipe);
-        } catch (IOException e) {
+            log.info("#### Recipe with ID={} saved with updated Image ####", recipeId);
+        } catch (Exception e) {
             //todo handle better
             log.error("Error occurred", e);
 
