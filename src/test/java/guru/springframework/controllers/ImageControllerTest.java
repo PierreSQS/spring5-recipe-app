@@ -7,13 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ImageControllerTest {
@@ -66,6 +70,37 @@ public class ImageControllerTest {
         verify(imageService, times(1)).saveImageFile(anyLong(), any());
     }
 
+    @Test
+    public void getImageFromDB() throws Exception {
+        String mockText = "Spring Guru";
+        byte[]  mockTextBytes = mockText.getBytes();
+
+        Byte[] imageBytes = new Byte[mockTextBytes.length];
+
+        int i = 0;
+        for (byte txtByte :mockTextBytes) {
+            imageBytes[i++] = txtByte;
+        }
+
+        // Given
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(1L);
+        recipeCommand.setImage(imageBytes);
+
+        when(recipeService.findCommandById(anyLong())).thenReturn(recipeCommand);
+
+        // Then
+        MvcResult mvcResult = mockMvc.perform(get("/recipe/1/recipeimage"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        MockHttpServletResponse mockHttpServletResp = mvcResult.getResponse();
+
+        String contentAsString = mockHttpServletResp.getContentAsString();
+
+        assertThat(contentAsString.getBytes()).hasSameSizeAs(mockTextBytes);
+    }
 
 
 }
