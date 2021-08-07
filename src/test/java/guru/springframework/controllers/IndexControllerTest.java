@@ -50,7 +50,7 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void getIndexPage() throws Exception {
+    public void getIndexPage() {
 
         //given
         Set<Recipe> recipes = new HashSet<>();
