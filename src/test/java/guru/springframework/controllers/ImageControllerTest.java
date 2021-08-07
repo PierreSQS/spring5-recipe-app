@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class ImageControllerTest {
@@ -35,7 +36,9 @@ public class ImageControllerTest {
         MockitoAnnotations.initMocks(this);
 
         controller = new ImageController(imageService, recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                                 .setControllerAdvice(new ControllerExceptionHandler())
+                                 .build();
     }
 
     @Test
@@ -52,6 +55,23 @@ public class ImageControllerTest {
                 .andExpect(model().attributeExists("recipe"));
 
         verify(recipeService, times(1)).findCommandById(anyLong());
+
+    }
+
+    @Test
+    public void getImageFormBadRequest() throws Exception {
+        //given
+        when(recipeService.findCommandById(anyLong())).thenThrow(NumberFormatException.class);
+
+        //when
+        mockMvc.perform(get("/recipe/{recipeId}/image","abcd"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"))
+                .andExpect(model().attributeExists("exception"))
+// TODO Check it
+//                .andExpect(model().attribute("exception",
+//                        containsString("java.lang.NumberFormatException: For input string: \"abcd\"")))
+                .andDo(print());
 
     }
 

@@ -39,8 +39,6 @@ public class RecipeControllerTest {
 
     @Before
     public void setUp() throws Exception {
-
-        //mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
