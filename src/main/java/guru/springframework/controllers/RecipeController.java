@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Created by jt on 6/19/17.
+ * modified by pierrot on 8/7/21.
  */
 @Slf4j
 @Controller
+@RequestMapping("recipe")
 public class RecipeController {
 
     private final RecipeService recipeService;
@@ -23,69 +24,69 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("/recipe/{id}/show")
-    public String showById(@PathVariable String id, Model model){
+    @GetMapping("{id}/show")
+    public String showById(@PathVariable Long id, Model model){
 
-        model.addAttribute("recipe", recipeService.findById(new Long(id)));
+        model.addAttribute("recipe", recipeService.findById(id));
 
         return "recipe/show";
     }
 
-    @GetMapping("recipe/new")
+    @GetMapping("new")
     public String newRecipe(Model model){
         model.addAttribute("recipe", new RecipeCommand());
 
         return "recipe/recipeform";
     }
 
-    @GetMapping("recipe/{id}/update")
-    public String updateRecipe(@PathVariable String id, Model model){
-        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+    @GetMapping("{id}/update")
+    public String updateRecipe(@PathVariable Long id, Model model){
+        model.addAttribute("recipe", recipeService.findCommandById(id));
         return  "recipe/recipeform";
     }
 
-    @PostMapping("recipe")
+    @PostMapping
     public String saveOrUpdate(@ModelAttribute RecipeCommand command){
         RecipeCommand savedCommand = recipeService.saveRecipeCommand(command);
 
         return "redirect:/recipe/" + savedCommand.getId() + "/show";
     }
 
-    @GetMapping("recipe/{id}/delete")
-    public String deleteById(@PathVariable String id){
+    @GetMapping("{id}/delete")
+    public String deleteById(@PathVariable Long id){
 
         log.debug("Deleting id: " + id);
 
-        recipeService.deleteById(Long.valueOf(id));
+        recipeService.deleteById(id);
         return "redirect:/";
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound(Exception exception){
+    public ModelAndView handleRecipeNotFound(Exception exception){
 
-        log.error("Handling not found exception");
+        log.error("Handling not found exception...");
         log.error(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("404error");
-        modelAndView.addObject("exception", exception);
+        modelAndView.addObject("exception",exception);
 
         return modelAndView;
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NumberFormatException.class)
-    public ModelAndView handleNumberFormat(Exception exception){
+    public ModelAndView handleNumberFormatException(Exception exception){
 
-        log.error("Handling Number Format Exception");
+        log.error("Handling Number Format Exception...");
         log.error(exception.getMessage());
 
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("400error");
-        modelAndView.addObject("exception", exception);
+        modelAndView.addObject("exception",exception);
 
         return modelAndView;
     }

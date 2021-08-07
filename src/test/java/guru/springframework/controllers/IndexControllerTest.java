@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
- * Created by jt on 6/17/17.
+ * modified by pierrot on 8/7/21.
  */
 public class IndexControllerTest {
 
@@ -50,7 +50,7 @@ public class IndexControllerTest {
     }
 
     @Test
-    public void getIndexPage() throws Exception {
+    public void getIndexPage() {
 
         //given
         Set<Recipe> recipes = new HashSet<>();
