@@ -65,9 +65,22 @@ public class RecipeControllerTest {
         String errorMsg = "Recipe not found.ID=3";
         when(recipeService.findById(anyLong())).thenThrow(new NotFoundException(errorMsg));
 
-        mockMvc.perform(get("/recipe/1/show"))
+        mockMvc.perform(get("/recipe/{recipeId}/show",-1))
                 .andExpect(status().isNotFound())
                 .andExpect(view().name("404error"))
+                .andExpect(content().string(containsString(errorMsg)))
+                .andDo(print());
+    }
+
+    @Test
+    public void testGetRecipeBadRequest() throws Exception {
+
+        String errorMsg = "Bad Request";
+        when(recipeService.findById(anyLong())).thenThrow(new NumberFormatException(errorMsg));
+
+        mockMvc.perform(get("/recipe/{recipeId}/show", "abab"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"))
                 .andExpect(content().string(containsString(errorMsg)))
                 .andDo(print());
     }
