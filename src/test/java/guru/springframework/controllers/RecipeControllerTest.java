@@ -1,49 +1,55 @@
 package guru.springframework.controllers;
 
 import guru.springframework.commands.RecipeCommand;
+import guru.springframework.domain.Notes;
 import guru.springframework.domain.Recipe;
 import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * modified by pierrot on 8/7/21.
  */
+@RunWith(SpringRunner.class)
+@WebMvcTest(RecipeController.class)
 public class RecipeControllerTest {
 
-    @Mock
+    @MockBean
     RecipeService recipeService;
 
-    RecipeController controller;
-
+    @Autowired
     MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
-        controller = new RecipeController(recipeService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     public void testGetRecipe() throws Exception {
 
+        Notes notes = new Notes();
+        notes.setRecipeNotes("Recipe Notes");
+
         Recipe recipe = new Recipe();
         recipe.setId(1L);
+        recipe.setNotes(notes);
 
         when(recipeService.findById(anyLong())).thenReturn(recipe);
 
@@ -56,11 +62,14 @@ public class RecipeControllerTest {
     @Test
     public void testGetRecipeNotFound() throws Exception {
 
-        when(recipeService.findById(anyLong())).thenThrow(NotFoundException.class);
+        String errorMsg = "Recipe not found.ID=3";
+        when(recipeService.findById(anyLong())).thenThrow(new NotFoundException(errorMsg));
 
         mockMvc.perform(get("/recipe/1/show"))
                 .andExpect(status().isNotFound())
-                .andExpect(view().name("404error"));
+                .andExpect(view().name("404error"))
+                .andExpect(content().string(containsString(errorMsg)))
+                .andDo(print());
     }
 
     @Test
